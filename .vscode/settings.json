@@ -1,0 +1,20 @@
+{
+    "files.associations": {
+        "vector": "cpp",
+        "atomic": "cpp",
+        "ios": "cpp",
+        "istream": "cpp",
+        "iterator": "cpp",
+        "limits": "cpp",
+        "memory": "cpp",
+        "ostream": "cpp",
+        "string": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "xmemory": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp",
+        "iostream": "cpp"
+    }
+}
