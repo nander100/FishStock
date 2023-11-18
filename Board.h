@@ -13,17 +13,22 @@ class Board {
         double eval;
         int moves;
         vector<Moves> possibleMoves;
-        bool isPinned(string) const;
-        void generateMoves();
+        vector<Moves> whiteMoves;
+        vector<Moves> blackMoves;
+        bool isPinned(Piece) const;
 
     public:
         Board();
         double getEval() const {return eval;}
-        void evaluate() const;
-        string bestMove() const;
+        void evaluate() ;
+        Moves bestMove();
+        // bool isPinned(string) const;
         void printBoard() const;
         void move(string, string); 
+        void move(Moves);
         bool validMove(string, string);
+        void generateMoves();
+
 };
 
 #endif

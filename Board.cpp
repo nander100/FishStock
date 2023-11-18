@@ -79,12 +79,11 @@ void Board::generateMoves() {
     for(unsigned int rank = 0; rank < 8; ++rank) {
         for(unsigned int file = 0; file < 8; ++file) {
             pieceToMove = gameBoard[rank][file];
-
             // PAWNS (COLOR DEPENDENT)
             if(pieceToMove.getTeam() == 0) {
                 // THE NUMBER OF AVAILABLE PAWN MOVES FOR WHITE 
                 if (pieceToMove.getType() == 1) {
-                    if (!pieceToMove.moved()){ // pawn has moved 
+                    if (!pieceToMove.moved()){ // pawn has not moved 
                         if (gameBoard[rank - 1][file].getType() == 0) {
                             moves++;
                             possibleMoves.push_back(Moves(rank, file, rank - 1, file));
@@ -94,35 +93,87 @@ void Board::generateMoves() {
                             }
                         }
                     }               
-                    else { // pawn has not moved
+                    else { // pawn has moved
                         if (gameBoard[rank - 1][file].getType() == 0) {
                             moves++;
                             possibleMoves.push_back(Moves(rank, file, rank - 1, file));
+                        }
+                    }
+                    if (gameBoard[rank - 1][file + 1].getType() != 0) {
+                        if (gameBoard[rank - 1][file + 1].getTeam() != gameBoard[rank][file].getTeam()) {
+                            if (gameBoard[rank - 1][file + 1].getType() != 6) {
+                                ++moves;
+                                possibleMoves.push_back(Moves(rank, file, rank - 1, file + 1, 1)); // capture
+                            }
+                             
+                            else {
+                                // ++moves;
+                                // possibleMoves.push_back(Moves(rank, file, rank, file + 1, 2)); // check                              
+                            }
+                        }
+                    }
+                    else if (gameBoard[rank - 1][file - 1].getType() != 0) {
+                        if (gameBoard[rank - 1][file - 1].getTeam() != gameBoard[rank][file].getTeam()) {
+                            if (gameBoard[rank - 1][file - 1].getType() != 6) {
+                                ++moves;
+                                possibleMoves.push_back(Moves(rank, file, rank - 1, file - 1, 1)); // capture
+                            }
+                            else {
+                                // ++moves;
+                                // possibleMoves.push_back(Moves(rank, file, rank, file - 1, 2)); // check  
+                            }
                         }
                     }
                 }
             }
             else if (pieceToMove.getTeam() == 1) {
                 if (pieceToMove.getType() == 1) {
-                    if (!pieceToMove.moved()){ // pawn has moved 
+                    // THE NUMBER OF AVAILABLE PAWN MOVES FOR BLACK 
+                    if (!pieceToMove.moved()){ // pawn has not moved 
                         if (gameBoard[rank + 1][file].getType() == 0) {
                             moves++;
                             possibleMoves.push_back(Moves(rank, file, rank +1, file));
                             if (gameBoard[rank + 2][file].getType() == 0) {
+
                                 moves++;
                                 possibleMoves.push_back(Moves(rank, file, rank + 2, file));
                             }
                         }
-                    }               
-                    else { // pawn has not moved
+                    }
+                    else { // pawn has moved
                         if (gameBoard[rank + 1][file].getType() == 0) {
                             moves++;
                             possibleMoves.push_back(Moves(rank, file, rank + 1, file));
                         }
                     }
+                    // pawn captures and checks
+                    if (gameBoard[rank + 1][file - 1].getType() != 0) {
+                        if (gameBoard[rank + 1][file - 1].getTeam() != gameBoard[rank][file].getTeam()) {
+                            if (gameBoard[rank + 1][file- 1].getType() != 6) {
+                                ++moves;
+                                possibleMoves.push_back(Moves(rank, file, rank + 1, file - 1, 1)); // capture
+                            }
+                             
+                            else {
+                                // ++moves;
+                                // possibleMoves.push_back(Moves(rank, file, rank, file + 1, 2)); // check                              
+                            }
+                        }
+                    }
+                    else if (gameBoard[rank + 1][file + 1].getType() != 0) {
+                        if (gameBoard[rank + 1][file + 1].getTeam() != gameBoard[rank][file].getTeam()) {
+                            if (gameBoard[rank + 1][file + 1].getType() != 6) {
+                                ++moves;
+                                possibleMoves.push_back(Moves(rank, file, rank + 1, file +1, 1)); // capture
+                            }
+                            else {
+                                // ++moves;
+                                // possibleMoves.push_back(Moves(rank, file, rank, file - 1, 2)); // check  
+                            }
+                        }
+                    }
                 }
             }
-
             // KNIGHTS
             if (pieceToMove.getType() == 2) {
                 if ((rank + 2 >= 0 && rank + 2 < 8 && file + 1 >= 0 && file + 1 < 8) &&
@@ -130,49 +181,114 @@ void Board::generateMoves() {
                     moves++;
                     possibleMoves.push_back(Moves(rank, file, rank + 2, file + 1));
                 }
+                else if ((rank + 2 >= 0 && rank + 2 < 8 && file + 1 >= 0 && file + 1 < 8) &&
+                    gameBoard[rank + 2][file + 1].getType() != 0 &&
+                    gameBoard[rank + 2][file + 1].getTeam() != gameBoard[rank][file].getTeam() &&
+                    gameBoard[rank + 2][file + 1].getType() != 6){
+                    moves++;
+                    possibleMoves.push_back(Moves(rank, file, rank + 2, file + 1, 1));
+                }
+
                 if ((rank + 2 >= 0 && rank + 2 < 8 && file - 1 >= 0 && file - 1 < 8) && 
                     gameBoard[rank + 2][file - 1].getType() == 0) {
                     moves++;
                     possibleMoves.push_back(Moves(rank, file, rank + 2, file - 1));
 
                 }
+                else if ((rank + 2 >= 0 && rank + 2 < 8 && file - 1 >= 0 && file - 1 < 8) &&
+                    gameBoard[rank + 2][file - 1].getType() != 0 &&
+                    gameBoard[rank + 2][file - 1].getTeam() != gameBoard[rank][file].getTeam() &&
+                    gameBoard[rank + 2][file - 1].getType() != 6){
+                    moves++;
+                    possibleMoves.push_back(Moves(rank, file, rank + 2, file - 1, 1));
+                }
+
                 if ((rank - 2 >= 0 && rank - 2 < 8 && file + 1 >= 0 && file + 1 < 8) &&
                     gameBoard[rank - 2][file + 1].getType() == 0) {
                     moves++;
                     possibleMoves.push_back(Moves(rank, file, rank - 2, file + 1));
 
                 }
+                else if ((rank - 2 >= 0 && rank - 2 < 8 && file + 1 >= 0 && file + 1 < 8) &&
+                    gameBoard[rank - 2][file + 1].getType() != 6 &&
+                    gameBoard[rank - 2][file + 1].getTeam() != gameBoard[rank][file].getTeam() &&
+                    gameBoard[rank - 2][file + 1].getType() != 0) {
+                    moves++;
+                    possibleMoves.push_back(Moves(rank, file, rank - 2, file + 1, 1));
+
+                }
+
                 if ((rank - 2 >= 0 && rank - 2 < 8 && file - 1 >= 0 && file - 1 < 8) &&
                     gameBoard[rank - 2][file - 1].getType() == 0) {
                     moves++;
                     possibleMoves.push_back(Moves(rank, file, rank - 2, file - 1));
 
                 }
+                else if ((rank - 2 >= 0 && rank - 2 < 8 && file - 1 >= 0 && file - 1 < 8) &&
+                    gameBoard[rank - 2][file - 1].getType() != 0 && 
+                    gameBoard[rank - 2][file - 1].getTeam() != gameBoard[rank][file].getTeam() &&
+                    gameBoard[rank - 2][file - 1].getType() != 6) {
+                    moves++;
+                    possibleMoves.push_back(Moves(rank, file, rank - 2, file - 1, 1));
+                }
+
                 if ((rank - 1 >= 0 && rank - 1 < 8 && file + 2 >= 0 && file + 2 < 8) &&
                     gameBoard[rank - 1][file + 2].getType() == 0) {
                     moves++;
                     possibleMoves.push_back(Moves(rank, file, rank - 1, file + 2));
 
                 }
+                else if ((rank - 1 >= 0 && rank - 1 < 8 && file + 2 >= 0 && file + 2 < 8) &&
+                    gameBoard[rank - 1][file + 2].getType() != 0 &&
+                    gameBoard[rank - 1][file + 2].getTeam() != gameBoard[rank][file].getTeam() &&
+                    gameBoard[rank - 1][file + 2].getType() != 6) {
+                    moves++;
+                    possibleMoves.push_back(Moves(rank, file, rank - 1, file + 2, 1)); 
+                }
+
                 if ((rank - 1 >= 0 && rank - 1 < 8 && file - 2 >= 0 && file - 2 < 8) &&
                     gameBoard[rank - 1][file - 2].getType() == 0) {
                     moves++;
                     possibleMoves.push_back(Moves(rank, file, rank - 1, file - 2));
 
                 }
+                else if ((rank - 1 >= 0 && rank - 1 < 8 && file - 2 >= 0 && file - 2 < 8) &&
+                    gameBoard[rank - 1][file - 2].getType() != 0 &&
+                    gameBoard[rank - 1][file - 2].getTeam() != gameBoard[rank][file].getTeam() &&
+                    gameBoard[rank - 1][file - 2].getType() != 6) {
+                    moves++;
+                    possibleMoves.push_back(Moves(rank, file, rank - 1, file - 2, 1));
+
+                }
+
                 if ((rank + 1 >= 0 && rank + 1 < 8 && file + 2 >= 0 && file + 2 < 8) &&
                     gameBoard[rank + 1][file + 2].getType() == 0) {
                     moves++;
                     possibleMoves.push_back(Moves(rank, file, rank + 1, file + 2));
                 }
+                else if ((rank + 1 >= 0 && rank + 1 < 8 && file + 2 >= 0 && file + 2 < 8) &&
+                    gameBoard[rank + 1][file + 2].getType() != 0 &&
+                    gameBoard[rank + 1][file + 2].getTeam() != gameBoard[rank][file].getTeam() &&
+                    gameBoard[rank + 1][file + 2].getType() != 6) {
+                    moves++;
+                    possibleMoves.push_back(Moves(rank, file, rank + 1, file + 2, 1));
+                }
+
                 if ((rank + 1 >= 0 && rank + 1 < 8 && file - 2 >= 0 && file -2 < 8) &&
                     gameBoard[rank + 1][file - 2].getType() == 0) {
                     moves++;
                     possibleMoves.push_back(Moves(rank, file, rank + 1, file - 2));
                 }
+                else if ((rank + 1 >= 0 && rank + 1 < 8 && file - 2 >= 0 && file -2 < 8) &&
+                    gameBoard[rank + 1][file - 2].getType() != 0 && 
+                    gameBoard[rank + 1][file - 2].getTeam() != gameBoard[rank][file].getTeam() &&
+                    gameBoard[rank + 1][file - 2].getType() != 6) {
+                    moves++;
+                    possibleMoves.push_back(Moves(rank, file, rank + 1, file - 2, 1));
+                }
             }
 
-            // BISHOPS
+            // BIHOPS
             if (pieceToMove.getType() == 3) {
                 int bRank = rank;
                 int bFile = file;
@@ -194,11 +310,16 @@ void Board::generateMoves() {
                 
                 while (bRank + 1 <= 7 && bRank + 1 >=0 && bFile - 1 <= 7 && bFile - 1 >= 0) {
                     if(gameBoard[bRank + 1][bFile - 1].getType() == 0){
-                        cout << 1 << endl;
                         moves++;
                         possibleMoves.push_back(Moves(rank, file, bRank + 1, bFile - 1));
                         bRank++;
                         bFile--;
+                    }
+                    else if(gameBoard[bRank + 1][bFile - 1].getType() != 0 && 
+                            gameBoard[bRank + 1][bFile - 1].getTeam() != gameBoard[bRank][bFile].getTeam() &&
+                            gameBoard[bRank + 1][bFile - 1].getType() != 6) {
+                            possibleMoves.push_back(Moves(rank, file, bRank + 1, bFile - 1, 1));
+                            break;
                     }
                     else {
                         break;
@@ -215,6 +336,12 @@ void Board::generateMoves() {
                         bRank--;
                         bFile++;
                     }
+                    else if(gameBoard[bRank - 1][bFile + 1].getType() != 0 && 
+                            gameBoard[bRank - 1][bFile + 1].getTeam() != gameBoard[bRank][bFile].getTeam() &&
+                            gameBoard[bRank - 1][bFile + 1].getType() != 6) {
+                            possibleMoves.push_back(Moves(rank, file, bRank - 1, bFile + 1, 1));
+                            break;
+                    }
                     else {
                         break;
                     }
@@ -230,6 +357,12 @@ void Board::generateMoves() {
                         bRank--;
                         bFile--;
                     }
+                    else if(gameBoard[bRank - 1][bFile - 1].getType() != 0 && 
+                            gameBoard[bRank - 1][bFile - 1].getTeam() != gameBoard[bRank][bFile].getTeam() &&
+                            gameBoard[bRank - 1][bFile - 1].getType() != 6) {
+                            possibleMoves.push_back(Moves(rank, file, bRank - 1, bFile - 1, 1));
+                            break;
+                    }
                     else {
                         break;
                     }
@@ -243,10 +376,14 @@ void Board::generateMoves() {
                 cout << "0" << endl;
                 while (rRank + 1 <= 7 && rRank + 1 >= 0 && rFile <= 7 && rFile >=0) {
                     if(gameBoard[rRank + 1][rFile].getType() == 0){
-                        cout << 1 << endl;
-                        moves++;
                         possibleMoves.push_back(Moves(rank, file, rRank + 1, rFile));
                         rRank++;
+                    }
+                    else if(gameBoard[rRank + 1][rFile].getType() != 0 && 
+                        gameBoard[rRank + 1][rFile].getTeam() != gameBoard[rank][file].getTeam() &&
+                        gameBoard[rRank + 1][rFile].getType() != 6) {
+                        possibleMoves.push_back(Moves(rank, file, rRank + 1, rFile, 1));
+                        break;
                     }
                     else {
                         break;
@@ -257,24 +394,33 @@ void Board::generateMoves() {
                 
                 while (rRank - 1 <= 7 && rRank - 1 >=0 && rFile <= 7 && rFile >= 0) {
                     if(gameBoard[rRank - 1][rFile].getType() == 0){
-                        cout << 1 << endl;
                         moves++;
                         possibleMoves.push_back(Moves(rank, file, rRank - 1, rFile));
                         rRank--;
                     }
-                    else {
+                    else if(gameBoard[rRank - 1][rFile].getType() != 0 && 
+                        gameBoard[rRank - 1][rFile].getTeam() != gameBoard[rank][file].getTeam() &&
+                        gameBoard[rRank - 1][rFile].getType() != 6) {
+                        possibleMoves.push_back(Moves(rank, file, rRank - 1, rFile, 1));
                         break;
                     }
+                    else {
+                        break;
+                    } 
                 }
                 rRank = rank;
                 rFile = file;
 
                 while (rRank <= 7 && rRank >= 0 && rFile + 1 <= 7 && rFile + 1 >=0) {
                     if(gameBoard[rRank][rFile + 1].getType() == 0){
-                        cout << 1 << endl;
-                        moves++;
                         possibleMoves.push_back(Moves(rank, file, rRank, rFile + 1));
                         rFile++;
+                    }
+                    else if(gameBoard[rRank][rFile + 1].getType() != 0 && 
+                        gameBoard[rRank][rFile + 1].getTeam() != gameBoard[rank][file].getTeam() &&
+                        gameBoard[rRank][rFile + 1].getType() != 6) {
+                        possibleMoves.push_back(Moves(rank, file, rRank, rFile + 1, 1));
+                        break;
                     }
                     else {
                         break;
@@ -285,10 +431,14 @@ void Board::generateMoves() {
                 
                 while (rRank <= 7 && rRank >=0 && rFile - 1 <= 7 && rFile - 1 >= 0) {
                     if(gameBoard[rRank][rFile - 1].getType() == 0){
-                        cout << 1 << endl;
-                        moves++;
                         possibleMoves.push_back(Moves(rank, file, rRank, rFile - 1));
                         rFile--;
+                    }
+                    else if(gameBoard[rRank][rFile - 1].getType() != 0 && 
+                        gameBoard[rRank][rFile - 1].getTeam() != gameBoard[rank][file].getTeam() &&
+                        gameBoard[rRank][rFile - 1].getType() != 6) {
+                        possibleMoves.push_back(Moves(rank, file, rRank, rFile - 1, 1));
+                        break;
                     }
                     else {
                         break;
@@ -304,10 +454,14 @@ void Board::generateMoves() {
                 cout << "0" << endl;
                 while (rRank + 1 <= 7 && rRank + 1 >= 0 && rFile <= 7 && rFile >=0) {
                     if(gameBoard[rRank + 1][rFile].getType() == 0){
-                        cout << 1 << endl;
-                        moves++;
                         possibleMoves.push_back(Moves(rank, file, rRank + 1, rFile));
                         rRank++;
+                    }
+                    else if(gameBoard[rRank + 1][rFile].getType() != 0 && 
+                        gameBoard[rRank + 1][rFile].getTeam() != gameBoard[rank][file].getTeam() &&
+                        gameBoard[rRank + 1][rFile].getType() != 6) {
+                        possibleMoves.push_back(Moves(rank, file, rRank + 1, rFile, 1));
+                        break;
                     }
                     else {
                         break;
@@ -318,24 +472,33 @@ void Board::generateMoves() {
                 
                 while (rRank - 1 <= 7 && rRank - 1 >=0 && rFile <= 7 && rFile >= 0) {
                     if(gameBoard[rRank - 1][rFile].getType() == 0){
-                        cout << 1 << endl;
                         moves++;
                         possibleMoves.push_back(Moves(rank, file, rRank - 1, rFile));
                         rRank--;
                     }
-                    else {
+                    else if(gameBoard[rRank - 1][rFile].getType() != 0 && 
+                        gameBoard[rRank - 1][rFile].getTeam() != gameBoard[rank][file].getTeam() &&
+                        gameBoard[rRank - 1][rFile].getType() != 6) {
+                        possibleMoves.push_back(Moves(rank, file, rRank - 1, rFile, 1));
                         break;
                     }
+                    else {
+                        break;
+                    } 
                 }
                 rRank = rank;
                 rFile = file;
 
                 while (rRank <= 7 && rRank >= 0 && rFile + 1 <= 7 && rFile + 1 >=0) {
                     if(gameBoard[rRank][rFile + 1].getType() == 0){
-                        cout << 1 << endl;
-                        moves++;
                         possibleMoves.push_back(Moves(rank, file, rRank, rFile + 1));
                         rFile++;
+                    }
+                    else if(gameBoard[rRank][rFile + 1].getType() != 0 && 
+                        gameBoard[rRank][rFile + 1].getTeam() != gameBoard[rank][file].getTeam() &&
+                        gameBoard[rRank][rFile + 1].getType() != 6) {
+                        possibleMoves.push_back(Moves(rank, file, rRank, rFile + 1, 1));
+                        break;
                     }
                     else {
                         break;
@@ -346,10 +509,14 @@ void Board::generateMoves() {
                 
                 while (rRank <= 7 && rRank >=0 && rFile - 1 <= 7 && rFile - 1 >= 0) {
                     if(gameBoard[rRank][rFile - 1].getType() == 0){
-                        cout << 1 << endl;
-                        moves++;
                         possibleMoves.push_back(Moves(rank, file, rRank, rFile - 1));
                         rFile--;
+                    }
+                    else if(gameBoard[rRank][rFile - 1].getType() != 0 && 
+                        gameBoard[rRank][rFile - 1].getTeam() != gameBoard[rank][file].getTeam() &&
+                        gameBoard[rRank][rFile - 1].getType() != 6) {
+                        possibleMoves.push_back(Moves(rank, file, rRank, rFile - 1, 1));
+                        break;
                     }
                     else {
                         break;
@@ -378,11 +545,16 @@ void Board::generateMoves() {
                 
                 while (bRank + 1 <= 7 && bRank + 1 >=0 && bFile - 1 <= 7 && bFile - 1 >= 0) {
                     if(gameBoard[bRank + 1][bFile - 1].getType() == 0){
-                        cout << 1 << endl;
                         moves++;
                         possibleMoves.push_back(Moves(rank, file, bRank + 1, bFile - 1));
                         bRank++;
                         bFile--;
+                    }
+                    else if(gameBoard[bRank + 1][bFile - 1].getType() != 0 && 
+                            gameBoard[bRank + 1][bFile - 1].getTeam() != gameBoard[rank][file].getTeam() &&
+                            gameBoard[bRank + 1][bFile - 1].getType() != 6) {
+                            possibleMoves.push_back(Moves(rank, file, bRank + 1, bFile - 1, 1));
+                            break;
                     }
                     else {
                         break;
@@ -399,6 +571,12 @@ void Board::generateMoves() {
                         bRank--;
                         bFile++;
                     }
+                    else if(gameBoard[bRank - 1][bFile + 1].getType() != 0 && 
+                            gameBoard[bRank - 1][bFile + 1].getTeam() != gameBoard[rank][file].getTeam() &&
+                            gameBoard[bRank - 1][bFile + 1].getType() != 6) {
+                            possibleMoves.push_back(Moves(rank, file, bRank - 1, bFile + 1, 1));
+                            break;
+                    }
                     else {
                         break;
                     }
@@ -414,11 +592,17 @@ void Board::generateMoves() {
                         bRank--;
                         bFile--;
                     }
+                    else if(gameBoard[bRank - 1][bFile - 1].getType() != 0 && 
+                            gameBoard[bRank - 1][bFile - 1].getTeam() != gameBoard[rank][file].getTeam() &&
+                            gameBoard[bRank - 1][bFile - 1].getType() != 6) {
+                            possibleMoves.push_back(Moves(rank, file, bRank - 1, bFile - 1, 1));
+                            break;
+                    }
                     else {
                         break;
                     }
                 }
-            }
+            } // end queen
         } // end for loop
     } // end for loop
 
@@ -433,18 +617,36 @@ void Board::generateMoves() {
 
         char eRank = ( -1 * (possibleMoves[i].eRank - 8) ) + 48;
         char eFile = possibleMoves[i].eFile + 97;
-        cout << sFile << sRank << " to " << eFile << eRank << endl;
+        if (possibleMoves[i].moveType == 0){
+            cout << sFile << sRank << " to " << eFile << eRank << endl;
+        }
+        else if (possibleMoves[i].moveType == 1) {
+            cout << sFile << sRank << " takes " << eFile << eRank << endl;
+        }
+        else {
+            cout << sFile << sRank << " to " << eFile << eRank << "check" << endl;
+        }
     }
     cout << endl;
 }// end function
 
-bool Board::validMove(string start, string end) { 
-    generateMoves();
+bool Board::validMove(string start, string end) {
+    int rank = 8 - (start.at(start.size() - 1) - 48); // finds the index of the rank
+    int file = start.at(start.size() - 2) - 97; // finds the index of the file
 
-
-
-                
-}// END FUNCTION
+    int rankEnd = 8 - (end.at(end.size() - 1) - 48); // finds the index of the rank
+    int fileEnd = end.at(end.size() - 2) - 97; // finds the index of the file
+    Moves toMove(rank, file, rankEnd, fileEnd);
+    for (unsigned int i = 0; i < possibleMoves.size(); ++i) {
+        if (possibleMoves[i].sRank == rank &&
+            possibleMoves[i].sFile == file &&
+            possibleMoves[i].eRank == rankEnd &&
+            possibleMoves[i].eFile == fileEnd) {
+            return true;
+        }
+    }
+    return false;
+}
 
 void Board::move(string start, string end) { // test move pf4
 
@@ -459,8 +661,10 @@ void Board::move(string start, string end) { // test move pf4
         int fileEnd = end.at(end.size() - 2) - 97; // finds the index of the file
 
         //moves the piece
+        
         gameBoard[rank][file] = Piece();
         gameBoard[rankEnd][fileEnd] = pieceToMove;
+        gameBoard[rankEnd][fileEnd].hasMoved = true;
         moves++;
 
 
@@ -471,45 +675,147 @@ void Board::move(string start, string end) { // test move pf4
 
     // }
 
-    // // determine the square
-    // if (moves %2 ==  0) { // white to move
-    //     if (move == "O-O") { // short castle
-    //         if (gameBoard[7][5].getType() == 0 &&
-    //         gameBoard[7][6].getType() == 0 &&
-    //         gameBoard[7][7].getType() == 4 &&
-    //         gameBoard[7][6].getType() == 0 &&
-    //         gameBoard[7][4].getType() == 6 &&
-    //         gameBoard[7][4].moved() == 0 &&
-    //         gameBoard[7][6].moved() == 0) {
+    // determine the square
+    if (moves %2 ==  0) { // white to move
+        if (start == "O-O") { // short castle
+            for (unsigned int i = 0; i < possibleMoves.size(); ++i) {
+                if ((blackMoves[i].eRank == 7 && blackMoves[i].eFile == 6) ||
+                    (blackMoves[i].eRank == 7 && blackMoves[i].eFile == 5)){
+                    cout << "Invalid Move!" << endl;
+                    return;
+                }
+            }
+            if (gameBoard[7][5].getType() == 0 &&
+            gameBoard[7][6].getType() == 0 &&
+            gameBoard[7][7].getType() == 4 &&
+            gameBoard[7][6].getType() == 0 &&
+            gameBoard[7][4].getType() == 6 &&
+            gameBoard[7][4].moved() == 0 &&
+            gameBoard[7][6].moved() == 0) {
                 
-    //             gameBoard[7][4] = Piece();
-    //             gameBoard[7][5] = Piece(0, 6);
-    //             gameBoard[7][6] = Piece(0, 4);
-    //             gameBoard[7][7] = Piece();
-    //             moves++;
-    //         }
+                gameBoard[7][4] = Piece();
+                gameBoard[7][5] = Piece(0, 6);
+                gameBoard[7][6] = Piece(0, 4);
+                gameBoard[7][7] = Piece();
+                moves++;
+            }
 
-    //     }
-    //     else if (move  == "O-O-O") { // long castle
+        }
+        // else if (moves == "O-O-O") { // long castle
 
-    //     }
-    //     else {
-    //         cout <<" Invalid Move!" << endl;
-    //     }
-    // }
-
-    // // select the piece
-    // // move it to the desired location
-
-    // if (validMove()) {
-    //     if (move[0] == 'p') { // pawn
-            
-    //     }
-    // }
+        // }
+        // else {
+        //     cout <<" Invalid Move!" << endl;
+        // }
+    }
 }
 
-void Board::evaluate() const {
+void Board::evaluate()  {
+    
+    
+    
     
     
     return;
 }
+
+Moves Board::bestMove() {
+    int rank;
+    int file;
+    int turn;
+    int whiteMaterial;
+    int blackMaterial;
+    Moves bMove;
+    for (unsigned int i = 0; i < possibleMoves.size(); ++i) {
+        rank = possibleMoves[i].sRank;
+        file = possibleMoves[i].sFile;
+        if(gameBoard[rank][file].getTeam() == 0) {
+            blackMoves.push_back(possibleMoves[i]);
+        }
+        else {
+            whiteMoves.push_back(possibleMoves[i]);
+        }
+    }
+    for (unsigned int i = 0; i < 8; ++i) {
+        for (unsigned int j = 0; j < 8; ++j)
+        if (gameBoard[i][j].getTeam() == 0) {
+            if (gameBoard[i][j].getType() == 1) {
+                whiteMaterial++;
+            }
+            else if (gameBoard[i][j].getType() == 2) {
+                whiteMaterial = whiteMaterial + 3;
+            }
+            else if (gameBoard[i][j].getType() == 3) {
+                whiteMaterial = whiteMaterial + 3;
+            }
+            else if (gameBoard[i][j].getType() == 4) {
+                whiteMaterial = whiteMaterial + 5;
+            }
+            else if (gameBoard[i][j].getType() == 5) {
+                whiteMaterial = whiteMaterial + 9;
+            }
+
+        }
+        else {
+            if (gameBoard[i][j].getType() == 1) {
+                blackMaterial++;
+            }
+            else if (gameBoard[i][j].getType() == 2) {
+                blackMaterial = blackMaterial + 3;
+            }
+            else if (gameBoard[i][j].getType() == 3) {
+                blackMaterial = blackMaterial + 3;
+            }
+            else if (gameBoard[i][j].getType() == 4) {
+                blackMaterial = blackMaterial + 5;
+            }
+            else if (gameBoard[i][j].getType() == 5) {
+                blackMaterial = blackMaterial + 9;
+            }
+        }
+
+        eval = whiteMaterial - blackMaterial;
+        int moveInd = rand() % possibleMoves.size();
+
+        Moves bestMove = blackMoves[moveInd];
+        
+    }
+    return bMove;
+
+}
+
+void Board::move(Moves toMove) {
+
+}
+
+// bool Board::isPinned(Piece piece) const {
+//     Piece wKing;
+//     Piece bKing;
+//     vector<Piece> pinnedPieces;
+//     for(unsigned int rank = 0; rank < 8; ++rank) {
+//         for(unsigned int file = 0; file < 8; ++file) {
+//             if (gameBoard[rank][file].getTeam() == 1){
+//                 if (gameBoard[rank][file].getType() == 6) {
+//                     bKing = gameBoard[rank][file];
+//                     //north
+//                     int newRank = rank;
+//                     int newFile = file;
+//                     while (newRank <= 7 && newRank >=0 && newFile <= 7 && newFile>= 0){
+//                         if (gameBoard[newRank - 1][newfile] == 0)
+//                     }
+                    
+//                 }
+//             }
+//             else if(gameBoard[rank][file].getTeam() == 0) {
+//                 if (gameBoard[rank][file].getType() == 6) {
+//                     wKing = gameBoard[rank][file];
+//                 }
+//             }
+//         }
+//     }
+        
+
+    
+//     piece.getType();
+// }
+

@@ -3,6 +3,7 @@
 
 class Piece {
     public:
+        bool hasMoved;
         Piece() {type = 0; team = 0; hasMoved = false;}
         Piece(int newTeam, int newType) {team = newTeam, type = newType; hasMoved = false;}
         int getTeam()const {return team;}
@@ -13,7 +14,6 @@ class Piece {
     private:
         int type;
         int team;
-        bool hasMoved;
 };
 
 #endif
